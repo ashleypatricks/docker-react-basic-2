@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .  # Where we want all of the files and folders on our local to be pulled from. We want them to come from the same directory as the docker-compose.yml file (The current working directory). If the app was nested inside another folder then you could also reference that here: build: context: reactfolder (i.e. any folder name)
+      dockerfile: Dockerfile.dev  # Location of the dockerfile that will be used to construct the image for this web service. (Look in the current directory for the file).
+    ports: 
+      - "4000:3000"
+    volumes:
+      - /app/node_modules # Do not try to map a folder up against this folder in the container.
+      - .:/app # Map the /app directory in the container to the CURRENT working directory of the local machine.
+  tests: # This service is purely for running tests on the container
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    command: ["npm", "run", "test"] # This is how we override the start up command that was originally in the Docker.dev file. Instead of "start" - it will be "test".
